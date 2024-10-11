@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de sesion</title>
+    <link rel="stylesheet" href="/static/styles-iniciar-sesion.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+
+
+</head>
+<body>
+    <div class="contain">
+        <form actio='/iniciar'method="post" class="form-iniciar">
+            <img src="/static/images/tradealert1.png" class="logo" alt="Escudo UNIPAMPLONA">
+            
+            <h3>Iniciar sesión</h3>
+
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" placeholder="Correo electrónico" required>
+
+            <label for="contraseña">Contraseña:</label>
+            <input type="password" id="contraseña" name="contraseña" placeholder="Contraseña" required>
+
+            <input type="submit" value="Iniciar sesion">
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,127 @@
+*{
+    margin: 0;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    background-repeat: no-repeat;
+    background-size: cover;
+    justify-content: space-between;
+}
+
+.contenedor{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    margin-top: 20px;
+    background-color: rgba(255, 255, 255, 0.6);
+
+}
+.contenedor h1{
+    display: none;
+}
+
+.contenedor img{
+    width: 200px;
+    height: 50px;
+    padding-left: 20px;
+}
+.links-nav{
+    padding-right: 30px;    
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    gap: 20px;
+}
+
+.links-nav a{
+    text-decoration: none;
+    color: black;
+    padding: 8px;
+    border-radius: 8px;
+    font-family: 'Poppins';
+    font-size: small;
+}
+.link1{
+    background-color: rgb(220, 221, 223);
+}
+.link1:hover{
+    background-color:rgb(238, 240, 242);
+}
+.link2{
+    background-color:rgb(25, 150, 222);
+
+}
+
+.link2:hover{
+    background-color:rgba(25, 150, 222, 0.718);
+}
+
+.txt-bienvenida{
+    position: absolute;
+    top: 50%;
+    left: 3%;
+    transform: translateY(-70%);
+    width: 30%;
+    padding: 25px;
+}
+.txt-bienvenida h3{
+    padding-bottom: 10px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.txt-bienvenida p{
+    font-family: 'Lato', sans-serif;
+}
+
+
+.input-comezar{
+    margin-top: 30px;
+    border:1px solid rgb(25, 150, 222);
+    height: 35px;
+    width: 60%;
+    border-radius: 8px;
+    outline: none;
+    font-family: 'Lato',sans-serif;
+    padding-left: 10px;
+}
+.btn-input{
+    color: inherit;
+    text-decoration: none;
+    margin-left: 10px;
+    width: 100px;
+    height: 39px;
+    border-radius: 8px;
+    background-color:rgb(25, 150, 222);
+    cursor: pointer;    
+    font-family: 'Poppins', sans-serif;
+    font-size: small;
+    padding: 10px;
+}
+
+footer {
+    width: 100%;
+    bottom: 0;
+    position: absolute;
+    margin-top: auto;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 10px 0;
+    background-color: rgb(195, 203, 244);
+}
+
+footer p {
+    font-family: 'Lato', sans-serif;
+    margin: 5px 0;
+}
+
+footer a {
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}

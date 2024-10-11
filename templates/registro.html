@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <link rel="stylesheet" href="/static/styles-registro.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+
+
+</head>
+<body>
+    <div class="contain">
+        <form action='/registro'method="POST" class="form-registro">
+            <img src="/static/images/logo.png" class="logo" alt="Escudo UNIPAMPLONA">
+
+            <label for="nombre">Nombres:</label>
+            <input type="text" id="nombres" name="nombres" placeholder="Nombres y Apellidos" required>
+
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" placeholder="Correo electrónico" required>
+
+            <label for="contraseña">Contraseña:</label>
+            <input type="password" id="contraseña" name="contraseña" placeholder="Contraseña" required>
+            <div class="checkbox-contain">
+                <input type="checkbox" id="checkbox-registro" name="checkbox-registro" required>          
+                <p>Al crear una cuenta, acepto los Términos de servicio y la Política de privacidad de Tradealert.</p>
+            </div>
+
+            <input type="submit" value="Registrarse">
+        </form>
+    </div>
+</body>
+</html>
