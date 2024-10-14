@@ -1,117 +1,155 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const btcValue = document.getElementById('btcValue');
+    const cryptoValue = document.getElementById('btcValue');
     const changePercentage = document.getElementById('changePercentage');
     const arrow = changePercentage.querySelector('.arrow');
     const ctx = document.getElementById('salesChart').getContext('2d');
+    const cryptoSelect = document.getElementById('cryptoSelect');
+    const errorMessage = document.getElementById('errorMessage'); // Asegúrate de añadir este elemento en tu HTML
 
-    // Recuperar los datos previos del localStorage si existen
-    let storedData = JSON.parse(localStorage.getItem('btcChartData')) || { labels: [], prices: [] };
+    let currentCrypto = 'bitcoin';
+    const supportedCryptos = ['bitcoin', 'ethereum', 'ripple']; // Añade aquí todas las criptomonedas que quieras soportar
 
-    let chartData = {
-        labels: storedData.labels, // Fechas (tiempo) almacenadas
-        datasets: [{
-            label: 'Bitcoin Price (USD)',
-            data: storedData.prices, // Precios de Bitcoin almacenados
-            borderColor: '#2196f3',
-            tension: 0.1,
-            fill: false
-        }]
-    };
+    let chart;
 
-    // Inicializar el gráfico
-    const chart = new Chart(ctx, {
-        type: 'line',
-        data: chartData,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true
-                }
-            },
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'minute',
-                        displayFormats: {
-                            minute: 'HH:mm' // Formato de hora
+    // Función para crear o actualizar el gráfico
+    function createOrUpdateChart(crypto) {
+        let storedData = JSON.parse(localStorage.getItem(`${crypto}ChartData`)) || { labels: [], prices: [] };
+
+        let chartData = {
+            labels: storedData.labels,
+            datasets: [{
+                label: `${crypto.charAt(0).toUpperCase() + crypto.slice(1)} Price (USD)`,
+                data: storedData.prices,
+                borderColor: '#2196f3',
+                tension: 0.1,
+                fill: false
+            }]
+        };
+
+        if (chart) {
+            chart.data = chartData;
+            chart.options.scales.y.title.text = `${crypto.charAt(0).toUpperCase() + crypto.slice(1)} Price (USD)`;
+            chart.update();
+        } else {
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true
                         }
                     },
-                    ticks: {
-                        // Mostrar etiquetas cada 5 minutos pero salen cada 10 quien sabe por que le movi algo y quedo asi
-                        callback: function(value, index, ticks) {
-                            const labelDate = new Date(value);
-                            return labelDate.getMinutes() % 5 === 0 ? labelDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'minute',
+                                displayFormats: {
+                                    minute: 'HH:mm'
+                                }
+                            },
+                            ticks: {
+                                callback: function(value, index, ticks) {
+                                    const labelDate = new Date(value);
+                                    return labelDate.getMinutes() % 5 === 0 ? labelDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Time'
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: `${crypto.charAt(0).toUpperCase() + crypto.slice(1)} Price (USD)`
+                            }
                         }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Time'
-                    }
-                },
-                y: {
-                    beginAtZero: false, // El eje Y no debe comenzar en 0 para precios
-                    title: {
-                        display: true,
-                        text: 'Price (USD)'
                     }
                 }
-            }
-        }
-    });
-
-    // Función para actualizar los datos de BTC
-    async function updateBTCData() {
-        try {
-            const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
-            const data = await response.json();
-            const price = data.bitcoin.usd;
-            const change = data.bitcoin.usd_24h_change;
-            const now = new Date(); // Tiempo actual
-
-            // Añadir nuevo dato a la gráfica
-            chart.data.labels.push(now);
-            chart.data.datasets[0].data.push(price);
-
-            // Limitar a los últimos 30 puntos (30 minutos)
-            if (chart.data.labels.length > 240) {
-                chart.data.labels.shift(); // Eliminar el primer elemento
-                chart.data.datasets[0].data.shift(); // Eliminar el primer dato
-            }
-
-            // Guardar los datos actualizados en el localStorage
-            localStorage.setItem('btcChartData', JSON.stringify({
-                labels: chart.data.labels,
-                prices: chart.data.datasets[0].data
-            }));
-
-            chart.update(); // Actualizar el gráfico
-
-            // Actualizar los valores de la interfaz
-            btcValue.textContent = `BTC ${price.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            const previousPrice = chart.data.datasets[0].data[chart.data.datasets[0].data.length - 2]; // Último precio antes del actual
-            const priceDifference = (price - previousPrice).toFixed(2); // Diferencia en dólares
-            const changeText = Math.abs(change).toFixed(2); // Cambio porcentual
-            const isPositive = change >= 0;
-
-            // Visualizar la diferencia de precio en dólares y el cambio porcentual
-            arrow.textContent = isPositive ? '↑' : '↓';
-            changePercentage.innerHTML = `
-                <span class="arrow">${arrow.textContent}</span> 
-                ${isPositive ? '+' : '-'}$${Math.abs(priceDifference)} (${changeText}%)
-            `;
-            changePercentage.style.color = isPositive ? '#4caf50' : '#f44336';
-
-        } catch (error) {
-            console.error('Error fetching BTC data:', error);
+            });
         }
     }
 
-    // Actualizar datos cada minuto (60000 milisegundos)
-    setInterval(updateBTCData, 60000);
+    // Función para actualizar los datos de todas las criptomonedas
+    async function updateAllCryptoData() {
+        try {
+            const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${supportedCryptos.join(',')}&vs_currencies=usd&include_24hr_change=true`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
 
-    // Llamada inicial para mostrar datos
-    updateBTCData();
+            supportedCryptos.forEach(crypto => {
+                const price = data[crypto].usd;
+                const change = data[crypto].usd_24h_change;
+                const now = new Date();
+
+                let storedData = JSON.parse(localStorage.getItem(`${crypto}ChartData`)) || { labels: [], prices: [] };
+                
+                storedData.labels.push(now);
+                storedData.prices.push(price);
+
+                if (storedData.labels.length > 240) {
+                    storedData.labels.shift();
+                    storedData.prices.shift();
+                }
+
+                localStorage.setItem(`${crypto}ChartData`, JSON.stringify(storedData));
+
+                if (crypto === currentCrypto) {
+                    createOrUpdateChart(crypto);
+                    updateInterface(crypto, price, change);
+                }
+            });
+
+            // Limpiar mensaje de error si la actualización fue exitosa
+            errorMessage.textContent = '';
+            errorMessage.style.display = 'none';
+
+        } catch (error) {
+            console.error('Error fetching crypto data:', error);
+            errorMessage.textContent = `Error al actualizar datos: ${error.message}. Intentando de nuevo en 1 minuto.`;
+            errorMessage.style.display = 'block';
+        }
+    }
+
+    // Función para actualizar la interfaz
+    function updateInterface(crypto, price, change) {
+        const formattedPrice = `${crypto.toUpperCase()} ${price.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        cryptoValue.textContent = formattedPrice;
+        
+        const changeText = Math.abs(change).toFixed(2);
+        const isPositive = change >= 0;
+
+        arrow.textContent = isPositive ? '↑' : '↓';
+        changePercentage.innerHTML = `
+            <span class="arrow">${arrow.textContent}</span> 
+            ${isPositive ? '+' : '-'}${changeText}%
+        `;
+        changePercentage.style.color = isPositive ? '#4caf50' : '#f44336';
+    }
+
+    // Función para cambiar la criptomoneda
+    function changeCryptocurrency() {
+        currentCrypto = cryptoSelect.value;
+        createOrUpdateChart(currentCrypto);
+        updateAllCryptoData();
+    }
+
+    // Evento para cambiar la criptomoneda
+    cryptoSelect.addEventListener('change', changeCryptocurrency);
+
+    // Actualizar datos cada minuto (60000 milisegundos)
+    setInterval(updateAllCryptoData, 60000);
+
+    // Inicialización
+    createOrUpdateChart(currentCrypto);
+    updateAllCryptoData();
 });

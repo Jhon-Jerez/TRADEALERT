@@ -52,7 +52,7 @@ body{
     background-color:rgb(238, 240, 242);
 }
 .link2{
-    background-color:rgb(25, 150, 222);
+    background-color:#2196f3;;
 
 }
 
@@ -80,7 +80,7 @@ body{
 
 .input-comezar{
     margin-top: 30px;
-    border:1px solid rgb(25, 150, 222);
+    border:1px solid #2196f3;;
     height: 35px;
     width: 60%;
     border-radius: 0.5rem;
@@ -95,7 +95,7 @@ body{
     width: 100px;
     height: 39px;
     border-radius: 0.5rem;
-    background-color:rgb(25, 150, 222);
+    background-color:#2196f3;;
     cursor: pointer;    
     font-family: 'Poppins', sans-serif;
     font-size: small;

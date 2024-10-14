@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tradealert Dashboard</title>
     <link rel="stylesheet" href="/static/styles-perfil.css">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-</head>
 <body>
     <header class="main-header">
         <img src="/static/images/tradealert.png" alt="LogoTradealert">
         <div class="buscar">
-            <input type="text" placeholder="">
+            <input type="text" placeholder="Buscar">     
+
         </div>
         <div class="user-info">
             <span>Juan Basto</span>
@@ -33,6 +34,14 @@
         </aside>
         <main class="main-content">
             <section class="dashboard-content">
+                <div class="crypto-selector">
+                    <label for="cryptoSelect">Seleccionar Cripto:</label>
+                    <select id="cryptoSelect">
+                        <option value="bitcoin">Bitcoin</option>
+                        <option value="ethereum">Ethereum</option>
+                        <option value="ripple">Ripple</option>
+                    </select>
+                </div>
                 <div class="revenue-info">
                     <div>
                         <p class="btc-value" id="btcValue"></p>

@@ -133,7 +133,7 @@ nav ul li a:hover, nav ul li a.active {
 .btn {
     padding: 0.5rem 1rem;
     border: none;
-    border-radius: 0.25rem;
+    border-radius: 0.5rem;
     font-size: 1rem;
     cursor: pointer;
     display: flex;
@@ -144,12 +144,19 @@ nav ul li a:hover, nav ul li a.active {
     background-color: #2196f3;
     color: white;
 }
+.btn-primary:hover{
+    background-color:rgba(25, 150, 222, 0.718);
 
+}
 .btn-secondary {
-    background-color: #f5f5f5;
+    background-color: rgb(220, 221, 223);
     color: #333;
 }
+.btn-secondary:hover{
+    background-color:rgb(238, 240, 242);
+    color: #333;
 
+}
 .btn .icon {
     margin-right: 0.5rem;
 }
@@ -161,7 +168,6 @@ nav ul li a:hover, nav ul li a.active {
 
 #chartTitle {
     text-align: center;
-    margin-bottom: 1rem;
 }
 
 
@@ -173,13 +179,31 @@ nav ul li a:hover, nav ul li a.active {
 
 .crypto-selector label {
     margin-right: 0.5rem;
+
 }
 
 #cryptoSelect {
-    padding: 2px;
+    padding: 3px;
     border-radius: 0.5rem;
     border: 1px solid #ccc;
     font-size: 1rem;
     cursor: pointer;
+    outline: none;
 
+}
+
+.buscar{
+    position: relative;
+    outline: none; 
+    width: 40%;
+    height: 22px;
+}
+.buscar input{
+    padding-left: 10px;
+    height: 100%;
+    width: 90%;
+    border-radius: 0.5rem;
+    outline: none;
+    border: none;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
