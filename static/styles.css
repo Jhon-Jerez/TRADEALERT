@@ -41,7 +41,7 @@ body{
     text-decoration: none;
     color: black;
     padding: 8px;
-    border-radius: 8px;
+    border-radius: 0.5rem;
     font-family: 'Poppins';
     font-size: small;
 }
@@ -83,7 +83,7 @@ body{
     border:1px solid rgb(25, 150, 222);
     height: 35px;
     width: 60%;
-    border-radius: 8px;
+    border-radius: 0.5rem;
     outline: none;
     font-family: 'Lato',sans-serif;
     padding-left: 10px;
@@ -94,7 +94,7 @@ body{
     margin-left: 10px;
     width: 100px;
     height: 39px;
-    border-radius: 8px;
+    border-radius: 0.5rem;
     background-color:rgb(25, 150, 222);
     cursor: pointer;    
     font-family: 'Poppins', sans-serif;

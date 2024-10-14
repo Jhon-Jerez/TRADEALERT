@@ -1,11 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tradealert</title>
+    <title>Tradealert Dashboard</title>
+    <link rel="stylesheet" href="/static/styles-perfil.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 </head>
 <body>
-    <h1>Hola señor@ que va a perder su dinero</h1>
+    <header class="main-header">
+        <img src="/static/images/tradealert.png" alt="LogoTradealert">
+        <div class="buscar">
+            <input type="text" placeholder="">
+        </div>
+        <div class="user-info">
+            <span>Juan Basto</span>
+            <div class="user-avatar"></div>
+        </div>
+    </header>
+    <div class="container">
+        <aside class="sidebar">
+            <nav>
+                <ul>
+                    <li><a href="#" class="active"><span class="icon">📊</span>Dashboard</a></li>
+                    <li><a href="#"><span class="icon">👤</span>Cuenta</a></li>
+                    <li><a href="#"><span class="icon">💼</span>Billetera</a></li>
+                    <li><a href="#"><span class="icon">⚙️</span>Opciones</a></li>
+                    <li><a href="#"><span class="icon">❓</span>Ayuda</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <section class="dashboard-content">
+                <div class="revenue-info">
+                    <div>
+                        <p class="btc-value" id="btcValue"></p>
+                        <p class="change-percentage" id="changePercentage">
+                            <span class="arrow"></span>
+                        </p>
+                    </div>
+                    <a href="#" class="view-report">Ver Reportes</a>
+                </div>
+                <div class="sales-chart">
+                    <div class="chart-container">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary">
+                        <span class="icon">+</span> Agregar dinero
+                    </button>
+                    <button class="btn btn-secondary">
+                        <span class="icon">🛒</span> Comprar / Vender
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+    <!-- Archivo de scripts -->
+    <script src="/static/script.js"></script>
 </body>
 </html>
