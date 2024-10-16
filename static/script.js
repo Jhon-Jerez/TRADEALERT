@@ -4,66 +4,83 @@ document.addEventListener('DOMContentLoaded', function() {
     const arrow = changePercentage.querySelector('.arrow');
     const ctx = document.getElementById('salesChart').getContext('2d');
     const cryptoSelect = document.getElementById('cryptoSelect');
-    const errorMessage = document.getElementById('errorMessage'); // Asegúrate de añadir este elemento en tu HTML
+    const errorMessage = document.getElementById('errorMessage');
+    const decisionMessage = document.getElementById('decisionMessage');
+    const automataButton = document.getElementById('automataButton');
 
     let currentCrypto = 'bitcoin';
-    const supportedCryptos = ['bitcoin', 'ethereum', 'ripple']; // Añade aquí todas las criptomonedas que quieras soportar
-
+    const supportedCryptos = ['bitcoin', 'ethereum', 'ripple'];
     let chart;
 
-    // Función para crear o actualizar el gráfico
-    function createOrUpdateChart(crypto) {
-        let storedData = JSON.parse(localStorage.getItem(`${crypto}ChartData`)) || { labels: [], prices: [] };
+    async function fetchCryptoData() {
+        try {
+            const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${supportedCryptos.join(',')}&vs_currencies=usd&include_24hr_change=true`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching crypto data:', error);
+            errorMessage.textContent = `Error al actualizar datos: ${error.message}. Intentando de nuevo en 1 minuto.`;
+            errorMessage.style.display = 'block';
+            return null;
+        }
+    }
 
-        let chartData = {
-            labels: storedData.labels,
-            datasets: [{
-                label: `${crypto.charAt(0).toUpperCase() + crypto.slice(1)} Price (USD)`,
-                data: storedData.prices,
-                borderColor: '#2196f3',
-                tension: 0.1,
-                fill: false
-            }]
-        };
+    async function fetchHistoricalData(crypto) {
+        try {
+            const response = await fetch(`https://api.coingecko.com/api/v3/coins/${crypto}/market_chart?vs_currency=usd&days=7&interval=daily`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            const prices = data.prices.map(p => p[1]);
+            const times = data.prices.map(p => new Date(p[0]));
+            return { times, prices };
+        } catch (error) {
+            console.error('Error fetching historical data:', error);
+            errorMessage.textContent = `Error al obtener los datos históricos: ${error.message}`;
+            errorMessage.style.display = 'block';
+            return null;
+        }
+    }
 
+    function createOrUpdateChart(crypto, chartData) {
         if (chart) {
-            chart.data = chartData;
+            chart.data.labels = chartData.times;
+            chart.data.datasets[0].data = chartData.prices;
             chart.options.scales.y.title.text = `${crypto.charAt(0).toUpperCase() + crypto.slice(1)} Price (USD)`;
             chart.update();
         } else {
             chart = new Chart(ctx, {
                 type: 'line',
-                data: chartData,
+                data: {
+                    labels: chartData.times,
+                    datasets: [{
+                        label: `${crypto.charAt(0).toUpperCase() + crypto.slice(1)} Price (USD)`,
+                        data: chartData.prices,
+                        borderColor: '#2196f3',
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true
-                        }
-                    },
                     scales: {
                         x: {
                             type: 'time',
                             time: {
-                                unit: 'minute',
-                                displayFormats: {
-                                    minute: 'HH:mm'
-                                }
-                            },
-                            ticks: {
-                                callback: function(value, index, ticks) {
-                                    const labelDate = new Date(value);
-                                    return labelDate.getMinutes() % 5 === 0 ? labelDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
-                                }
+                                unit: 'day'
                             },
                             title: {
                                 display: true,
-                                text: 'Time'
+                                text: 'Date'
                             }
                         },
                         y: {
-                            beginAtZero: false,
                             title: {
                                 display: true,
                                 text: `${crypto.charAt(0).toUpperCase() + crypto.slice(1)} Price (USD)`
@@ -75,52 +92,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Función para actualizar los datos de todas las criptomonedas
-    async function updateAllCryptoData() {
-        try {
-            const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${supportedCryptos.join(',')}&vs_currencies=usd&include_24hr_change=true`);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-
-            supportedCryptos.forEach(crypto => {
-                const price = data[crypto].usd;
-                const change = data[crypto].usd_24h_change;
-                const now = new Date();
-
-                let storedData = JSON.parse(localStorage.getItem(`${crypto}ChartData`)) || { labels: [], prices: [] };
-                
-                storedData.labels.push(now);
-                storedData.prices.push(price);
-
-                if (storedData.labels.length > 240) {
-                    storedData.labels.shift();
-                    storedData.prices.shift();
-                }
-
-                localStorage.setItem(`${crypto}ChartData`, JSON.stringify(storedData));
-
-                if (crypto === currentCrypto) {
-                    createOrUpdateChart(crypto);
-                    updateInterface(crypto, price, change);
-                }
-            });
-
-            // Limpiar mensaje de error si la actualización fue exitosa
-            errorMessage.textContent = '';
-            errorMessage.style.display = 'none';
-
-        } catch (error) {
-            console.error('Error fetching crypto data:', error);
-            errorMessage.textContent = `Error al actualizar datos: ${error.message}. Intentando de nuevo en 1 minuto.`;
-            errorMessage.style.display = 'block';
-        }
-    }
-
-    // Función para actualizar la interfaz
     function updateInterface(crypto, price, change) {
         const formattedPrice = `${crypto.toUpperCase()} ${price.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         cryptoValue.textContent = formattedPrice;
@@ -136,20 +107,64 @@ document.addEventListener('DOMContentLoaded', function() {
         changePercentage.style.color = isPositive ? '#4caf50' : '#f44336';
     }
 
-    // Función para cambiar la criptomoneda
-    function changeCryptocurrency() {
+    async function changeCryptocurrency() {
         currentCrypto = cryptoSelect.value;
-        createOrUpdateChart(currentCrypto);
-        updateAllCryptoData();
+        const chartData = await fetchHistoricalData(currentCrypto);
+        if (chartData) {
+            createOrUpdateChart(currentCrypto, chartData);
+        }
+        const latestData = await fetchCryptoData();
+        if (latestData && latestData[currentCrypto]) {
+            updateInterface(currentCrypto, latestData[currentCrypto].usd, latestData[currentCrypto].usd_24h_change);
+        }
     }
 
-    // Evento para cambiar la criptomoneda
-    cryptoSelect.addEventListener('change', changeCryptocurrency);
+    function makeDecision(prices) {
+        const slope = linearRegression(prices);
+        let decision = 'Mantenerse';
 
-    // Actualizar datos cada minuto (60000 milisegundos)
-    setInterval(updateAllCryptoData, 60000);
+        if (slope > 0) {
+            decision = 'Comprar';
+        } else if (slope < 0) {
+            decision = 'Vender';
+        }
+
+        return decision;
+    }
+
+    function linearRegression(prices) {
+        const n = prices.length;
+        const x = Array.from({ length: n }, (_, i) => i + 1);
+        const sumX = x.reduce((a, b) => a + b, 0);
+        const sumY = prices.reduce((a, b) => a + b, 0);
+        const sumXY = x.reduce((acc, curr, i) => acc + curr * prices[i], 0);
+        const sumX2 = x.reduce((a, b) => a + b * b, 0);
+
+        const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        return slope;
+    }
+
+    async function runAutomata() {
+        const chartData = await fetchHistoricalData(currentCrypto);
+        if (chartData) {
+            const decision = makeDecision(chartData.prices);
+            decisionMessage.textContent = `Decisión del autómata para ${currentCrypto}: ${decision}`;
+            decisionMessage.style.display = 'block';
+        }
+    }
+
+    cryptoSelect.addEventListener('change', changeCryptocurrency);
+    automataButton.addEventListener('click', runAutomata);
 
     // Inicialización
-    createOrUpdateChart(currentCrypto);
-    updateAllCryptoData();
+    (async () => {
+        const chartData = await fetchHistoricalData(currentCrypto);
+        if (chartData) {
+            createOrUpdateChart(currentCrypto, chartData);
+        }
+        const latestData = await fetchCryptoData();
+        if (latestData && latestData[currentCrypto]) {
+            updateInterface(currentCrypto, latestData[currentCrypto].usd, latestData[currentCrypto].usd_24h_change);
+        }
+    })();
 });

@@ -62,6 +62,7 @@ def iniciar():
             hash_contraseña= usuario[2]
             if sha256_crypt.verify(contraseña_inicio,hash_contraseña):
                 session['email']=email
+                session['nombres']=usuario[0]
                 return redirect('/perfil')
             else:
                 return 'Contrasela incorrecta'
@@ -70,9 +71,18 @@ def iniciar():
     else:
         return render_template('iniciar.html')    
     
-@app.route('/perfil',methods=['GET','POST'])
+@app.route('/perfil', methods=['GET', 'POST'])
 def perfil():
-    return render_template('perfil.html')
+    if 'email' not in session:
+        return redirect('/iniciar')
+    
+    nombre_usuario = session.get('nombres', 'Usuario')
+    return render_template('perfil.html', nombre_usuario=nombre_usuario)
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()  # Limpiar la sesión
+    return redirect('/')
 
 
 #se inicializa la app flask
