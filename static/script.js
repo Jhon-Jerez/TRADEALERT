@@ -4,25 +4,33 @@ document.addEventListener('DOMContentLoaded', function() {
     const arrow = changePercentage.querySelector('.arrow');
     const ctx = document.getElementById('salesChart').getContext('2d');
     const cryptoSelect = document.getElementById('cryptoSelect');
-    const errorMessage = document.getElementById('errorMessage'); // Asegúrate de añadir este elemento en tu HTML
+    const errorMessage = document.getElementById('errorMessage');
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('modal-body');
+    const loading = document.getElementById('loading');
 
     let currentCrypto = 'bitcoin';
-    const supportedCryptos = ['bitcoin', 'ethereum', 'ripple', 'cardano']; // Añade aquí todas las criptomonedas que quieras soportar
-
+    const supportedCryptos = ['bitcoin', 'ethereum', 'ripple', 'cardano'];
     let chart;
 
     // Función para crear o actualizar el gráfico
     function createOrUpdateChart(crypto) {
         let storedData = JSON.parse(localStorage.getItem(`${crypto}ChartData`)) || { labels: [], prices: [] };
+        let labelsAsDates = storedData.labels.map(label => new Date(label));
+
+        const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+        gradient.addColorStop(0, 'rgba(33, 150, 243, 0.8)');
 
         let chartData = {
-            labels: storedData.labels,
+            labels: labelsAsDates,
             datasets: [{
                 label: `${crypto.charAt(0).toUpperCase() + crypto.slice(1)} Price (USD)`,
                 data: storedData.prices,
                 borderColor: '#2196f3',
                 tension: 0.1,
-                fill: false
+                backgroundColor: gradient,
+                borderWidth: 1,
+                fill: true
             }]
         };
 
@@ -52,14 +60,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             },
                             ticks: {
-                                callback: function(value, index, ticks) {
+                                callback: (value) => {
                                     const labelDate = new Date(value);
-                                    return labelDate.getMinutes() % 5 === 0 ? labelDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
+                                    return labelDate.getMinutes() % 10 === 0 ? labelDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
                                 }
                             },
                             title: {
                                 display: true,
-                                text: 'Time'
+                                text: 'Hora'
                             }
                         },
                         y: {
@@ -109,7 +117,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            // Limpiar mensaje de error si la actualización fue exitosa
             errorMessage.textContent = '';
             errorMessage.style.display = 'none';
 
@@ -122,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para actualizar la interfaz
     function updateInterface(crypto, price, change) {
-        const formattedPrice = `${crypto.toUpperCase()} ${price.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const formattedPrice = `${crypto.toUpperCase()} ${price.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  (USD)`;
         cryptoValue.textContent = formattedPrice;
         
         const changeText = Math.abs(change).toFixed(2);
@@ -143,10 +150,95 @@ document.addEventListener('DOMContentLoaded', function() {
         updateAllCryptoData();
     }
 
-    // Evento para cambiar la criptomoneda
+    // Funciones para el modal
+    function openModal(content) {
+        modalContent.innerHTML = content;
+        modal.style.display = 'block';
+    }
+
+    document.querySelector('.close').addEventListener('click', function () {
+        modal.style.display = 'none';
+    });
+
+    // Botones de acción
+    document.querySelector('.btn-primary').addEventListener('click', function () {
+        openModal('<h2>Agregar dinero</h2><p>Formulario para agregar dinero...</p>');
+    });
+
+    document.querySelector('.btn-secondary').addEventListener('click', function () {
+        openModal('<h2>Comprar / Vender</h2><p>Formulario para comprar o vender...</p>');
+    });
+
+    document.querySelector('.btn-automata').addEventListener('click', async function () {
+        openModal('');
+        loading.style.display = 'block';
+    
+        await new Promise(resolve => setTimeout(resolve, 2000));
+    
+        const storageKey = `${currentCrypto}ChartData`;
+        let storedData = JSON.parse(localStorage.getItem(storageKey));
+        if (!storedData || storedData.labels.length === 0) {
+            alert("No hay datos disponibles para la criptomoneda seleccionada.");
+            loading.style.display = 'none';
+            return;
+        }
+    
+        const dates = storedData.labels.map(label => new Date(label));
+        const prices = storedData.prices;
+    
+        const regressionResult = performLinearRegression(dates, prices);
+        const currentPrice = prices[prices.length - 1];
+        const predictedPrice = regressionResult.predictedNextPrice;
+        const decision = getTradingDecision(currentPrice, predictedPrice);
+    
+        loading.style.display = 'none';
+    
+        openModal(`
+            <p><strong>Consejo:</strong> ${decision}</p>
+            <p><strong>Precio actual:</strong> ${currentPrice.toFixed(2)} USD</p>
+            <p><strong>Precio predictivo (5 minutos):</strong> ${predictedPrice.toFixed(2)} USD</p>
+            <p><strong>Por qué:</strong> ${decision === 'Comprar' ? 'Se espera que el precio suba.' : decision === 'Vender' ? 'Se espera que el precio baje.' : 'El precio se mantiene estable.'}</p>
+        `);
+    });
+
+    // Regresión lineal
+    function performLinearRegression(dates, prices) {
+        const n = prices.length;
+        const X = dates.map(date => date.getTime());
+        const Y = prices;
+
+        const meanX = X.reduce((a, b) => a + b, 0) / n;
+        const meanY = Y.reduce((a, b) => a + b, 0) / n;
+
+        let num = 0, denom = 0;
+        for (let i = 0; i < n; i++) {
+            num += (X[i] - meanX) * (Y[i] - meanY);
+            denom += (X[i] - meanX) * (X[i] - meanX);
+        }
+        const slope = num / denom;
+        const intercept = meanY - (slope * meanX);
+
+        const lastDate = X[X.length - 1];
+        const predictedNextPrice = slope * (lastDate + 300000) + intercept; 
+
+        return { slope, intercept, predictedNextPrice };
+    }
+
+    // Función para tomar la decisión de compra/venta según la regresión
+    function getTradingDecision(currentPrice, predictedPrice) {
+        if (predictedPrice > currentPrice) {
+            return 'Comprar';
+        } else if (predictedPrice < currentPrice) {
+            return 'Vender';
+        } else {
+            return 'Mantenerse';
+        }
+    }
+
+    // Event listeners
     cryptoSelect.addEventListener('change', changeCryptocurrency);
 
-    // Actualizar datos cada minuto (60000 milisegundos)
+    // Actualizar datos cada minuto
     setInterval(updateAllCryptoData, 60000);
 
     // Inicialización

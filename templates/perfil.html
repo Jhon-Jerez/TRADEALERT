@@ -65,6 +65,10 @@
                     <div class="chart-container">
                         <canvas id="salesChart"></canvas>
                     </div>
+                    <div id="btcValue"></div>
+                    <div id="changePercentage"></div>
+                    <div id="errorMessage"></div>
+
                 </div>
                 <div class="action-buttons">
                     <button class="btn btn-primary">
@@ -82,8 +86,9 @@
             <div id="modal" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
-                    <div id="modal-body"></div>
+                    <div class="modal-body" id="modal-body"></div>
                     <div id="loading" class="loading-spinner" style="display: none;"></div>
+                    <label class="loadingMessage" id="loadingMessage">Analizando datos...</label>
                 </div>
             </div>
 
@@ -91,20 +96,16 @@
         </main>
     </div>
     <!-- Archivo de scripts  sobre la grafica y extracion de datos-->
-    <script src="/static/script-buttons.js"></script>
     <script src="/static/script.js"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
     const userAvatar = document.getElementById('userAvatar');
     const logoutPopup = document.getElementById('logoutPopup');
 
     userAvatar.addEventListener('click', function() {
-        // Alterna la visibilidad de la ventana emergente
         logoutPopup.style.display = logoutPopup.style.display === 'block' ? 'none' : 'block';
     });
 
-    // Opcional: Cierra la ventana emergente si se hace clic fuera de ella
     window.addEventListener('click', function(e) {
         if (!userAvatar.contains(e.target) && !logoutPopup.contains(e.target)) {
             logoutPopup.style.display = 'none';
