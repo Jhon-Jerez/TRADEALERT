@@ -45,47 +45,40 @@ def registro():
             print("Error al insertar en la base de datos:", err)
     return render_template('registro.html')
 
-
-@app.route('/iniciar', methods=['GET','POST'])
+@app.route('/iniciar', methods=['GET', 'POST'])
 def iniciar():
     if request.method == 'POST':
-        email=request.form['email']
-        contraseña_inicio= request.form['contraseña']
+        email = request.form['email']
+        contraseña_inicio = request.form['contraseña']
 
-        mycursor=mydb.cursor()
-        sql="Select * FROM usuario WHERE  email= %s"
-        val=(email,)
+        mycursor = mydb.cursor()
+        sql = "SELECT nombres, contraseña FROM usuario WHERE email = %s"
+        val = (email,)
         mycursor.execute(sql, val)
-        usuario= mycursor.fetchone()
+        usuario = mycursor.fetchone()
 
         if usuario:
-            hash_contraseña= usuario[2]
-            if sha256_crypt.verify(contraseña_inicio,hash_contraseña):
-                session['email']=email
-                session['nombres']=usuario[0]
+            hash_contraseña = usuario[1]
+            if sha256_crypt.verify(contraseña_inicio, hash_contraseña):
+                session['email'] = email
+                session['nombres'] = usuario[0]  # Guardar el nombre en la sesión
                 return redirect('/perfil')
             else:
-                return 'Contrasela incorrecta'
+                return 'Contraseña incorrecta'
         else:
             return 'Usuario no registrado'
     else:
-        return render_template('iniciar.html')    
+        return render_template('iniciar.html')
     
-@app.route('/perfil', methods=['GET', 'POST'])
+@app.route('/perfil',methods=['GET','POST'])
 def perfil():
-    if 'email' not in session:
-        return redirect('/iniciar')
-    
-    nombre_usuario = session.get('nombres', 'Usuario')
-    return render_template('perfil.html', nombre_usuario=nombre_usuario)
+    return render_template('perfil.html')
 
-@app.route('/logout', methods=['POST'])
+@app.route('/logout')
 def logout():
-    session.clear()  # Limpiar la sesión
-    return redirect('/')
-
+    session.clear()
+    return render_template('index.html')
 
 #se inicializa la app flask
 if __name__== '__main__':
     app.run(debug=True)
-

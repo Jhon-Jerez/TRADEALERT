@@ -68,37 +68,27 @@ nav ul li a:hover, nav ul li a.active {
     padding-right: 20px;
     padding-left: 14px;
 }
-
 .user-info {
     display: flex;
-    align-items: center;
-    font-family: 'poppins';
+    align-items: center; /* Alineación vertical centrada */
+    justify-content: center; /* Alineación horizontal centrada */
+    text-align: center;
+   
 }
 
-.dropdown-menu button {
-    position: fixed;
-    top: 40px; 
-    right: 20px;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    padding: 0.5rem;
-}
-
-
-
-.dropdown-menu button:hover {
-    background-color: #f1f1f1;
-}
-
+.user-name {
+    margin-right: 0.5rem; /* Espacio entre el nombre y el avatar */
+    font-family: 'lato', sans-serif;
+} 
 
 .user-avatar {
-    margin-left: 5px;
-    filter: drop-shadow(0 0 1px rgba(0,0,0,.8));
+    filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.8)); /* Sombra usando filter */
+    padding-left: 0.5rem;
+    border-bottom: 0;
     cursor: pointer;
 }
+
+
 
 .dashboard-content {
     background-color: white;
@@ -166,22 +156,22 @@ nav ul li a:hover, nav ul li a.active {
     background-color:rgba(25, 150, 222, 0.718);
 
 }
-.btn-secundary{
+.btn-secondary {
     background-color: rgb(220, 221, 223);
     color: #333;
 }
-.btn-secundary:hover{
+.btn-secondary:hover{
     background-color:rgb(238, 240, 242);
     color: #333;
 }
 
 .btn-automata {
-    background-color: rgb(59, 110, 183);
-    color: white;
+    background-color: rgb(50, 72, 116);
+    color:white;
 }
 .btn-automata:hover{
-    background-color:rgb(121, 173, 226);
-    color: white;
+    background-color:rgb(63, 112, 161);
+    color:white;
 
 }
 .btn .icon {
@@ -233,4 +223,83 @@ nav ul li a:hover, nav ul li a.active {
     outline: none;
     border: none;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+
+
+.popup {
+    display: none;
+    position: absolute;
+    top: 45px; /* Ajusta para que quede debajo del avatar */
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    z-index: 100;
+    width: 150px;
+    border-radius: 0.5rem;
+}
+
+.popup a {
+    text-decoration: none;
+    color: #2196f3;
+    font-weight: bold;
+}
+
+.popup a:hover {
+    color: #f44336; /* Cambia el color al pasar el mouse */
+}
+
+
+
+
+/* Estilos para el modal */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed; 
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+}
+
+.modal-content {
+    border-radius: 0.5rem;
+    background-color: white;
+    margin: 15% auto; /* Centrar el modal */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%; /* Tamaño del modal */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    cursor: pointer;
+}
+
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+    border: 6px solid #f3f3f3; /* Light grey */
+    border-top: 6px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto; /* Centramos el spinner */
 }
