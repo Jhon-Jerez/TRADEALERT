@@ -61,7 +61,7 @@ def iniciar():
             hash_contraseña = usuario[1]
             if sha256_crypt.verify(contraseña_inicio, hash_contraseña):
                 session['email'] = email
-                session['nombres'] = usuario[0]  # Guardar el nombre en la sesión
+                session['nombres'] = usuario[0]  
                 return redirect('/perfil')
             else:
                 return 'Contraseña incorrecta'
@@ -72,7 +72,25 @@ def iniciar():
     
 @app.route('/perfil',methods=['GET','POST'])
 def perfil():
-    return render_template('perfil.html')
+     if 'email' not in session:
+        return redirect('/login')
+     else:
+        return render_template('perfil.html')
+
+@app.route('/cuenta', methods=['GET','POST'])
+def cuenta():
+    mycursor= mydb.cursor()
+    if 'email' not in session:
+        return redirect('/login')
+     
+    
+    sql="SELECT saldo FROM usuario WHERE email= %s"
+    mycursor.execute(sql,(session['email'],))
+    usuario= mycursor.fetchone()
+    if usuario:
+        session['saldo']=usuario[0]
+    mycursor.close()
+    return render_template('usuario.html')
 
 @app.route('/logout')
 def logout():

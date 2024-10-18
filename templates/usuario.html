@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tradealert Dashboard</title>
-    <link rel="stylesheet" href="/static/styles-perfil.css">
+    <title>Cuenta</title>
+    <link rel="stylesheet" href="/static/styles-usuario.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -38,8 +38,8 @@
         <aside class="sidebar">
             <nav>
                 <ul>
-                    <li><a href="/perfil" class="active"><span class="icon">📊</span>Dashboard</a></li>
-                    <li><a href="/cuenta"><span class="icon">👤</span>Cuenta</a></li>
+                    <li><a href="/perfil"><span class="icon">📊</span>Dashboard</a></li>
+                    <li><a href="/cuenta" class="active"><span class="icon">👤</span>Cuenta</a></li>
                     <li><a href="#"><span class="icon">💼</span>Billetera</a></li>
                     <li><a href="#"><span class="icon">⚙️</span>Opciones</a></li>
                     <li><a href="#"><span class="icon">❓</span>Ayuda</a></li>
@@ -48,55 +48,40 @@
         </aside>
         <main class="main-content">
             <section class="dashboard-content">
-                <div class="crypto-selector">
-                    <label for="cryptoSelect">Seleccionar Cripto:</label>
-                    <select id="cryptoSelect">
-                        <option value="bitcoin">Bitcoin</option>
-                        <option value="ethereum">Ethereum</option>
-                        <option value="ripple">Ripple</option>
-                        <option value="cardano">Cardano</option>
 
-                    </select>
-                </div>
-                <div class="revenue-info">
-                    <div>
-                        <p class="btc-value" id="btcValue"></p>
-                        <p class="change-percentage" id="changePercentage">
-                            <span class="arrow"></span>
-                        </p>
+                <div class="columns">
+                    <div class="profile">
+                        <h2><span>{{ session['nombres'] }}</span></h2>
+                        <div class="balance">
+                            <span>{{ session['saldo'] }} (COP)</span>
+                        </div>
+                        <form id="profile-form">
+                            <div class="form-group">
+                                <label for="name">Nombre</label>
+                                <input type="text" id="name" placeholder="Escriba su nombre">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Cambiar contraseña</label>
+                                <input type="password" id="password" placeholder="Escriba su contraseña">
+                            </div>
+                            <div class="form-group country-select">
+                                <label for="country">País de residencia</label>
+                                <select id="country">
+                                    <option value="usa">USA</option>
+                                    <option value="venezuela">Venezuela</option>
+                                    <option value="cuba">Cuba</option>
+                                    <option value="corea-del-norte">Corea del Norte</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="save-button">Guardar cambios</button>
+                        </form>
                     </div>
-                    <a href="#" class="view-report">Ver Reportes</a>
-                </div>
-                <div class="sales-chart">
-                    <div class="chart-container">
-                        <canvas id="salesChart"></canvas>
+                    <div class="imagen-h">
+                        <img src="/static/images/cuenta.png" alt="">
                     </div>
-                    <div id="btcValue"></div>
-                    <div id="changePercentage"></div>
-                    <div id="errorMessage"></div>
-
-                </div>
-                <div class="action-buttons">
-                    <button class="btn btn-primary">
-                        <span class="icon">+</span> Agregar dinero
-                    </button>
-                    <button class="btn btn-secondary">
-                        <span class="icon">🛒</span> Comprar / Vender
-                    </button>
-                    <button class="btn btn-automata">
-                        <span class="icon">🤖</span> Usar Automata
-                    </button>
                 </div>
             </section>
-            <!-- Modal -->
-            <div id="modal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <div class="modal-body" id="modal-body"></div>
-                    <div id="loading" class="loading-spinner" style="display: none;"></div>
-                    <label class="loadingMessage" id="loadingMessage">Analizando datos...</label>
-                </div>
-            </div>
+            
 
 
         </main>

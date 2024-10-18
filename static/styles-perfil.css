@@ -69,6 +69,7 @@ nav ul li a:hover, nav ul li a.active {
     padding-left: 14px;
 }
 .user-info {
+    padding-right: 0.5rem;
     display: flex;
     align-items: center; /* Alineación vertical centrada */
     justify-content: center; /* Alineación horizontal centrada */
@@ -77,15 +78,22 @@ nav ul li a:hover, nav ul li a.active {
 }
 
 .user-name {
-    margin-right: 0.5rem; /* Espacio entre el nombre y el avatar */
-    font-family: 'lato', sans-serif;
+    margin-right: 0.5rem; 
+    font-family: 'poppins', sans-serif;
+    color: #666;
 } 
 
 .user-avatar {
     filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.8)); /* Sombra usando filter */
-    padding-left: 0.5rem;
+    padding-right: 0.5rem;
     border-bottom: 0;
+}
+.cerrar-sesion{
+    padding-top: 7px;
     cursor: pointer;
+}
+.cerrar-sesion:hover{
+    fill: #2196f3;
 }
 
 
@@ -230,14 +238,15 @@ nav ul li a:hover, nav ul li a.active {
 .popup {
     display: none;
     position: absolute;
-    top: 45px; /* Ajusta para que quede debajo del avatar */
+    top: 45px; 
     right: 0;
+    margin-right: 30px;
     background-color: white;
     border: 1px solid #ccc;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     padding: 10px;
     z-index: 100;
-    width: 150px;
+    width: 140px;
     border-radius: 0.5rem;
 }
 
