@@ -60,11 +60,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             },
                             ticks: {
+                                autoSkip: true,
                                 callback: (value) => {
                                     const labelDate = new Date(value);
-                                    return labelDate.getMinutes() % 10 === 0 ? labelDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
+                                    return labelDate.getMinutes() % 5 === 0 ? labelDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
                                 }
-                            },
+                            }
+                            ,
                             title: {
                                 display: true,
                                 text: 'Hora'

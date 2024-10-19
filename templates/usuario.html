@@ -55,22 +55,24 @@
                         <div class="balance">
                             <span>{{ session['saldo'] }} (COP)</span>
                         </div>
-                        <form id="profile-form">
+                        <form id="profile-form" action="/cuenta" method="POST">
                             <div class="form-group">
-                                <label for="name">Nombre</label>
-                                <input type="text" id="name" placeholder="Escriba su nombre">
+                                <label for="actualizar-nombre">Actualizar nombre</label>
+                                <input type="text" id="actualizar-nombre" name="actualizar-nombre" placeholder="Escriba su nombre" autocomplete="username">
                             </div>
                             <div class="form-group">
-                                <label for="password">Cambiar contraseña</label>
-                                <input type="password" id="password" placeholder="Escriba su contraseña">
+                                <label for="contraseña">Cambiar contraseña</label>
+                                <input type="password" id="contraseña" name="actualizar-contraseña" placeholder="Escriba su contraseña" autocomplete="new-password">
                             </div>
                             <div class="form-group country-select">
-                                <label for="country">País de residencia</label>
-                                <select id="country">
+                                <label for="country">País de residencia</label required>
+                                <select id="country" name="country">
+                                    <option value="colombia">Colombia</option>
                                     <option value="usa">USA</option>
                                     <option value="venezuela">Venezuela</option>
                                     <option value="cuba">Cuba</option>
                                     <option value="corea-del-norte">Corea del Norte</option>
+
                                 </select>
                             </div>
                             <button type="submit" class="save-button">Guardar cambios</button>
@@ -86,8 +88,6 @@
 
         </main>
     </div>
-    <!-- Archivo de scripts  sobre la grafica y extracion de datos-->
-    <script src="/static/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
     const cerrarSesion = document.getElementById('cerrarSesion');
@@ -98,7 +98,7 @@
     });
 
     window.addEventListener('click', function(e) {
-        if (!cerrarsesion.contains(e.target) && !logoutPopup.contains(e.target)) {
+        if (!cerrarSesion.contains(e.target) && !logoutPopup.contains(e.target)) {
             logoutPopup.style.display = 'none';
         }
     });

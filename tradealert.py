@@ -77,20 +77,54 @@ def perfil():
      else:
         return render_template('perfil.html')
 
-@app.route('/cuenta', methods=['GET','POST'])
+@app.route('/cuenta', methods=['GET', 'POST'])
 def cuenta():
-    mycursor= mydb.cursor()
+    mycursor = mydb.cursor()
     if 'email' not in session:
         return redirect('/login')
-     
     
-    sql="SELECT saldo FROM usuario WHERE email= %s"
-    mycursor.execute(sql,(session['email'],))
-    usuario= mycursor.fetchone()
+    if request.method == 'POST':
+        try:
+            nombres = request.form['actualizar-nombre']
+            contraseña = request.form['actualizar-contraseña']
+            pais = request.form['country']
+            
+            print(f"Nombres: {nombres}, Contraseña: {contraseña}, País: {pais}") 
+            
+            if contraseña:
+                hash_contraseña = sha256_crypt.hash(contraseña)
+            
+            if nombres:
+                sql = "UPDATE usuario SET nombres = %s WHERE email = %s"
+                val = (nombres, session['email'])
+                mycursor.execute(sql, val)
+
+            if contraseña:
+                sql = "UPDATE usuario SET contraseña = %s WHERE email = %s"
+                val = (hash_contraseña, session['email'])
+                mycursor.execute(sql, val)
+            
+            if pais:
+                sql = "UPDATE usuario SET pais = %s WHERE email = %s"
+                val = (pais, session['email'])
+                mycursor.execute(sql, val)
+
+            mydb.commit()
+            print("Datos actualizados correctamente.")
+        except mysql.connector.Error as err:
+            print("Error al actualizar en la base de datos:", err)
+    
+    sql = "SELECT saldo FROM usuario WHERE email = %s"
+    mycursor.execute(sql, (session['email'],))
+    usuario = mycursor.fetchone()
+    
     if usuario:
-        session['saldo']=usuario[0]
+        session['saldo'] = usuario[0]
+    
     mycursor.close()
     return render_template('usuario.html')
+
+
 
 @app.route('/logout')
 def logout():
