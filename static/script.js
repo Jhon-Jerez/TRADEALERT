@@ -164,15 +164,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Botones de acción
     document.querySelector('.btn-primary').addEventListener('click', function () {
-        openModal('<h2>Agregar dinero</h2><p>Formulario para agregar dinero...</p>');
+        openModal(`
+            <h2>Agregar dinero</h2>
+            <form action="/perfil" method="POST">
+                <div class="form-group">
+                    <label for="monto">Monto COP:</label>
+                    <input type="number" id="monto" name="monto" step="0.01" required>
+                </div>
+                <div class="form-group" stlye="padding-bottom: 10px">
+                    <label for="metodo-pago">Método de pago:</label>
+                    <select id="metodo-pago" name="metodo-pago" required>
+                        <option value="">Seleccione un método</option>
+                        <option value="creditCard">Tarjeta de crédito</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="bankTransfer">Transferencia bancaria</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-agregar">Agregar</button>
+            </form>
+        `);
     });
+    
 
     document.querySelector('.btn-secondary').addEventListener('click', function () {
         openModal('<h2>Comprar / Vender</h2><p>Formulario para comprar o vender...</p>');
     });
 
     document.querySelector('.btn-automata').addEventListener('click', async function () {
-        openModal('');
+        openModal('Analizando datos...');
         loading.style.display = 'block';
     
         await new Promise(resolve => setTimeout(resolve, 2000));

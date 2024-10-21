@@ -3,6 +3,8 @@ import mysql.connector
 from passlib.hash import sha256_crypt
 import os
 from dotenv import load_dotenv
+from decimal import Decimal
+
 
 load_dotenv()
 
@@ -70,12 +72,23 @@ def iniciar():
     else:
         return render_template('iniciar.html')
     
-@app.route('/perfil',methods=['GET','POST'])
+@app.route('/perfil', methods=['GET','POST'])
 def perfil():
-     if 'email' not in session:
+    if 'email' not in session:
         return redirect('/login')
-     else:
-        return render_template('perfil.html')
+    else:
+        if request.method=='POST':
+            saldo=Decimal(request.form['monto'])
+            mycursor= mydb.cursor()
+            sql = "UPDATE usuario SET saldo = %s WHERE email = %s"
+            val=(saldo, session['email'])
+            mycursor.execute(sql,val)
+            mydb.commit()
+            return render_template('perfil.html')
+
+        else:
+            return render_template('perfil.html')
+
 
 @app.route('/cuenta', methods=['GET', 'POST'])
 def cuenta():
@@ -88,9 +101,7 @@ def cuenta():
             nombres = request.form['actualizar-nombre']
             contraseña = request.form['actualizar-contraseña']
             pais = request.form['country']
-            
-            print(f"Nombres: {nombres}, Contraseña: {contraseña}, País: {pais}") 
-            
+                        
             if contraseña:
                 hash_contraseña = sha256_crypt.hash(contraseña)
             
@@ -110,7 +121,6 @@ def cuenta():
                 mycursor.execute(sql, val)
 
             mydb.commit()
-            print("Datos actualizados correctamente.")
         except mysql.connector.Error as err:
             print("Error al actualizar en la base de datos:", err)
     
@@ -123,7 +133,6 @@ def cuenta():
     
     mycursor.close()
     return render_template('usuario.html')
-
 
 
 @app.route('/logout')
