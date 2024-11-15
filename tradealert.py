@@ -54,7 +54,7 @@ def iniciar():
         contraseña_inicio = request.form['contraseña']
 
         mycursor = mydb.cursor()
-        sql = "SELECT nombres, contraseña FROM usuario WHERE email = %s"
+        sql = "SELECT nombres, contraseña, saldo FROM usuario WHERE email = %s"
         val = (email,)
         mycursor.execute(sql, val)
         usuario = mycursor.fetchone()
@@ -64,6 +64,7 @@ def iniciar():
             if sha256_crypt.verify(contraseña_inicio, hash_contraseña):
                 session['email'] = email
                 session['nombres'] = usuario[0]  
+                session['saldo']= usuario[2]
                 return redirect('/perfil')
             else:
                 return 'Contraseña incorrecta'
@@ -72,22 +73,26 @@ def iniciar():
     else:
         return render_template('iniciar.html')
     
-@app.route('/perfil', methods=['GET','POST'])
+@app.route('/perfil', methods=['GET', 'POST'])
 def perfil():
     if 'email' not in session:
         return redirect('/login')
     else:
-        if request.method=='POST':
-            saldo=Decimal(request.form['monto'])
-            mycursor= mydb.cursor()
+        if request.method == 'POST':
+            saldo = Decimal(request.form['monto'])
+            mycursor = mydb.cursor()
+            saldo_actual=Decimal(session['saldo'])
+            nuevo_saldo = saldo + saldo_actual
             sql = "UPDATE usuario SET saldo = %s WHERE email = %s"
-            val=(saldo, session['email'])
-            mycursor.execute(sql,val)
+            val = (nuevo_saldo, session['email'])
+            mycursor.execute(sql, val)
             mydb.commit()
-            return render_template('perfil.html')
+            session['saldo'] = nuevo_saldo
+            return redirect('/perfil')
 
         else:
             return render_template('perfil.html')
+
 
 
 @app.route('/cuenta', methods=['GET', 'POST'])

@@ -313,10 +313,34 @@ input[type="number"]::-webkit-inner-spin-button {
     border-radius: 0.5rem;
 }
 
-.form-group{
-    padding: 15px;
-    border-radius: 0.5rem;
-    
+.formulario-centro{
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar el formulario */
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom:px;
+    text-align: center;
+}
+.form-group input{
+    border-radius: 0.3rem;
+    outline: none;
+    height: 20px;
+    border: 1px solid rgb(169, 164, 164);
+}
+.form-group label{
+    border: 2px solid green;
+}
+.radio-buttons {
+    text-align: left; 
+}
+
+input[type="radio"] {
+    margin-right: 3px;
 }
 
 .close {

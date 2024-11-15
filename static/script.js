@@ -166,19 +166,22 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('.btn-primary').addEventListener('click', function () {
         openModal(`
             <h2>Agregar dinero</h2>
-            <form action="/perfil" method="POST">
+            <form class="formulario-centro" action="/perfil" method="POST">
                 <div class="form-group">
                     <label for="monto">Monto COP:</label>
                     <input type="number" id="monto" name="monto" step="0.01" required>
                 </div>
-                <div class="form-group" stlye="padding-bottom: 10px">
+                <div class="form-group">
                     <label for="metodo-pago">Método de pago:</label>
-                    <select id="metodo-pago" name="metodo-pago" required>
-                        <option value="">Seleccione un método</option>
-                        <option value="creditCard">Tarjeta de crédito</option>
-                        <option value="paypal">PayPal</option>
-                        <option value="bankTransfer">Transferencia bancaria</option>
-                    </select>
+                    <div class="radio-buttons">
+                        <input type="radio" id="creditCard" name="metodo-pago" value="creditCard" required>
+                        <label for="creditCard">Tarjeta de crédito</label><br>
+
+                        <input type="radio" id="paypal" name="metodo-pago" value="paypal">
+                        <label for="paypal">PayPal</label><br>
+                        <input type="radio" id="bankTransfer" name="metodo-pago" value="bankTransfer">
+                        <label for="bankTransfer">Transferencia bancaria</label><br>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-agregar">Agregar</button>
             </form>
