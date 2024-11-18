@@ -114,6 +114,7 @@ def api_saldo():
         return {'error': 'Error interno del servidor'}, 500
 
 
+
 @app.route('/cuenta', methods=['GET', 'POST'])
 def cuenta():
     mycursor = mydb.cursor()
