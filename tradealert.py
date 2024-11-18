@@ -93,6 +93,25 @@ def perfil():
         else:
             return render_template('perfil.html')
 
+@app.route('/api/saldo')
+def api_saldo():
+    if 'email' not in session:
+        return {'error': 'No autorizado'}, 401
+
+    try:
+        mycursor = mydb.cursor()
+        sql = "SELECT saldo FROM usuario WHERE email = %s"
+        mycursor.execute(sql, (session['email'],))
+        usuario = mycursor.fetchone()
+        mycursor.close()
+
+        if usuario:
+            return {'saldo': float(usuario[0])}  # Convertimos Decimal a float
+        else:
+            return {'error': 'Usuario no encontrado'}, 404
+    except mysql.connector.Error as err:
+        print("Error al consultar el saldo:", err)
+        return {'error': 'Error interno del servidor'}, 500
 
 
 @app.route('/cuenta', methods=['GET', 'POST'])

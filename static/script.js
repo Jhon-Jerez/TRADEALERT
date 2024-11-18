@@ -8,10 +8,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('modal');
     const modalContent = document.getElementById('modal-body');
     const loading = document.getElementById('loading');
-
     let currentCrypto = 'bitcoin';
     const supportedCryptos = ['bitcoin', 'ethereum', 'ripple', 'cardano'];
     let chart;
+   
+
 
     // Función para crear o actualizar el gráfico
     function createOrUpdateChart(crypto) {
@@ -168,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <h2>Agregar dinero</h2>
             <form class="formulario-centro" action="/perfil" method="POST">
                 <div class="form-group">
-                    <label for="monto">Monto COP:</label>
+                    <label for="monto">Monto USD:</label>
                     <input type="number" id="monto" name="monto" step="0.01" required>
                 </div>
                 <div class="form-group">
@@ -190,8 +191,56 @@ document.addEventListener('DOMContentLoaded', function() {
     
 
     document.querySelector('.btn-secondary').addEventListener('click', function () {
-        openModal('<h2>Comprar / Vender</h2><p>Formulario para comprar o vender...</p>');
+        fetch('/api/saldo') // Llamamos al endpoint Flask
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener el saldo');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+    
+                const saldo = data.saldo.toFixed(2);
+                const currentPrice = JSON.parse(localStorage.getItem(`${currentCrypto}ChartData`)).prices.slice(-1)[0]; // Precio actual
+                const cryptoSymbol = currentCrypto.charAt(0).toUpperCase() + currentCrypto.slice(1);
+    
+                openModal(`
+                    <h2>Comprar</h2>
+                    <form id="transactionForm">
+                        <div class="balance">Saldo: $${saldo} USD</div>
+                        <div class="form-group-venta">
+                            <label for="monto">Monto en USD:</label>
+                            <input type="number" id="monto" name="monto" step="0.01" required>
+                        </div>
+                        <div class="form-group-venta">
+                            <label> Cantidad estimada:<p id="calculatedAmount">0 ${cryptoSymbol}</p></label>
+                        </div>
+                        <button type="button" id="submitTransaction" class="btn btn-agregar">Confirmar</button>
+                    </form>
+                `);
+    
+                const montoInput = document.getElementById('monto');
+                const calculatedAmount = document.getElementById('calculatedAmount');
+    
+                montoInput.addEventListener('input', function () {
+                    const monto = parseFloat(montoInput.value) || 0;
+                    const cryptoAmount = (monto / currentPrice).toFixed(8); // Cantidad calculada
+                    calculatedAmount.textContent = `${cryptoAmount} ${cryptoSymbol}`;
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un problema al cargar el saldo.');
+            });
     });
+    
+
+
+
 
     document.querySelector('.btn-automata').addEventListener('click', async function () {
         openModal('Analizando datos...');
