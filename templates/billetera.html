@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cuenta</title>
+    <title>Biilletera</title>
     <link rel="stylesheet" href="/static/styles-usuario.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400&display=swap" rel="stylesheet">
@@ -39,8 +39,8 @@
             <nav>
                 <ul>
                     <li><a href="/perfil"><span class="icon">📊</span>Dashboard</a></li>
-                    <li><a href="/cuenta" class="active"><span class="icon">👤</span>Cuenta</a></li>
-                    <li><a href="/billetera"><span class="icon">💼</span>Billetera</a></li>
+                    <li><a href="/cuenta"><span class="icon">👤</span>Cuenta</a></li>
+                    <li><a href="/billetera" class="active"><span class="icon">💼</span>Billetera</a></li>
                     <li><a href="#"><span class="icon">⚙️</span>Opciones</a></li>
                     <li><a href="#"><span class="icon">❓</span>Ayuda</a></li>
                 </ul>
@@ -49,39 +49,7 @@
         <main class="main-content">
             <section class="dashboard-content">
 
-                <div class="columns">
-                    <div class="profile">
-                        <h2><span>{{ session['nombres'] }}</span></h2>
-                        <div class="balance">
-                            <span>{{ session['saldo'] }} (USD)</span>
-                        </div>
-                        <form id="profile-form" action="/cuenta" method="POST">
-                            <div class="form-group">
-                                <label for="actualizar-nombre">Actualizar nombre</label>
-                                <input type="text" id="actualizar-nombre" name="actualizar-nombre" placeholder="Escriba su nombre" autocomplete="username">
-                            </div>
-                            <div class="form-group">
-                                <label for="contraseña">Cambiar contraseña</label>
-                                <input type="password" id="contraseña" name="actualizar-contraseña" placeholder="Escriba su contraseña" autocomplete="new-password">
-                            </div>
-                            <div class="form-group country-select">
-                                <label for="country">País de residencia</label required>
-                                <select id="country" name="country">
-                                    <option value="colombia">Colombia</option>
-                                    <option value="usa">USA</option>
-                                    <option value="venezuela">Venezuela</option>
-                                    <option value="cuba">Cuba</option>
-                                    <option value="corea-del-norte">Corea del Norte</option>
-
-                                </select>
-                            </div>
-                            <button type="submit" class="save-button">Guardar cambios</button>
-                        </form>
-                    </div>
-                    <div class="imagen-h">
-                        <img src="/static/images/cuenta.png" alt="">
-                    </div>
-                </div>
+        
             </section>
             
 

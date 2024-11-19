@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, jsonify
 import mysql.connector
 from passlib.hash import sha256_crypt
 import os
@@ -159,6 +159,77 @@ def cuenta():
     mycursor.close()
     return render_template('usuario.html')
 
+@app.route('/billetera', methods=['GET','POST'])
+def billetera():
+    return render_template ('billetera.html')
+
+@app.route('/comprar', methods=['POST'])
+def comprar():
+    if 'email' not in session:
+        return jsonify({'error': 'Usuario no autenticado'}), 401
+
+    try:
+        data = request.json
+        crypto_symbol = data.get('cryptoSymbol')
+        crypto_amount = data.get('cryptoAmount')
+        monto = data.get('monto')
+
+        if not crypto_symbol or not crypto_amount or not monto:
+            return jsonify({'error': 'Datos faltantes'}), 400
+
+        try:
+            crypto_amount = Decimal(crypto_amount)
+            monto = Decimal(monto)
+        except Exception as e:
+            return jsonify({'error': f'Error en la conversión de datos: {str(e)}'}), 400
+
+        usuario_id = session['email']
+
+        # Obtener saldo de USD del usuario
+        mycursor = mydb.cursor(dictionary=True)
+        mycursor.execute("SELECT saldo FROM usuario WHERE email = %s", (usuario_id,))
+        user_result = mycursor.fetchone()
+        saldo_disponible = user_result['saldo'] if user_result else 0
+
+        # Comprobar que hay suficiente saldo en USD
+        if saldo_disponible < monto:
+            return jsonify({'error': 'Saldo insuficiente en USD'}), 400
+
+        # Obtener saldo de la criptomoneda en billetera
+        mycursor.execute("SELECT saldo FROM billetera WHERE usuario_id = %s AND criptomoneda = %s", (usuario_id, crypto_symbol))
+        wallet_result = mycursor.fetchone()
+
+        if wallet_result:
+            wallet_balance = wallet_result['saldo']
+        else:
+            wallet_balance = Decimal('0.00000000')
+
+        # Si la criptomoneda ya existe, sumamos la cantidad
+        new_wallet_balance = wallet_balance + crypto_amount
+
+        # Actualizar billetera
+        if wallet_result:
+            mycursor.execute("UPDATE billetera SET saldo = %s WHERE usuario_id = %s AND criptomoneda = %s", (new_wallet_balance, usuario_id, crypto_symbol))
+        else:
+            mycursor.execute("INSERT INTO billetera (usuario_id, criptomoneda, saldo) VALUES (%s, %s, %s)", (usuario_id, crypto_symbol, crypto_amount))
+
+        # Registrar la compra en la tabla compra_cripto
+        mycursor.execute("""INSERT INTO compra_cripto (usuario_id, criptomoneda, cantidad, precio_unitario, total) 
+                           VALUES (%s, %s, %s, %s, %s)""", 
+                           (usuario_id, crypto_symbol, crypto_amount, monto / crypto_amount, monto))
+
+        # Actualizar el saldo de USD
+        mycursor.execute("UPDATE usuario SET saldo = saldo - %s WHERE email = %s", (monto, usuario_id))
+
+        mydb.commit()
+        return jsonify({'message': 'Compra procesada correctamente.'})
+
+    except Exception as e:
+        print("Error:", str(e))
+        return jsonify({'error': f'Error en la compra: {str(e)}'}), 500
+
+            
+            
 
 @app.route('/logout')
 def logout():

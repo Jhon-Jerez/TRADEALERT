@@ -40,7 +40,7 @@
                 <ul>
                     <li><a href="/perfil" class="active"><span class="icon">📊</span>Dashboard</a></li>
                     <li><a href="/cuenta"><span class="icon">👤</span>Cuenta</a></li>
-                    <li><a href="#"><span class="icon">💼</span>Billetera</a></li>
+                    <li><a href="/billetera"><span class="icon">💼</span>Billetera</a></li>
                     <li><a href="#"><span class="icon">⚙️</span>Opciones</a></li>
                     <li><a href="#"><span class="icon">❓</span>Ayuda</a></li>
                 </ul>
@@ -100,24 +100,8 @@
 
         </main>
     </div>
-    <!-- Archivo de scripts  sobre la grafica y extracion de datos-->
+
     <script src="/static/script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    const cerrarSesion = document.getElementById('cerrarSesion');
-    const logoutPopup = document.getElementById('logoutPopup');
-
-    cerrarSesion.addEventListener('click', function() {
-        logoutPopup.style.display = logoutPopup.style.display === 'block' ? 'none' : 'block';
-    });
-
-    window.addEventListener('click', function(e) {
-        if (!cerrarsesion.contains(e.target) && !logoutPopup.contains(e.target)) {
-            logoutPopup.style.display = 'none';
-        }
-    });
-});
-    </script>
 
 </body>
 </html>

@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
 
     document.querySelector('.btn-secondary').addEventListener('click', function () {
-        fetch('/api/saldo') // Llamamos al endpoint Flask
+        fetch('/api/saldo')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al obtener el saldo');
@@ -225,21 +225,59 @@ document.addEventListener('DOMContentLoaded', function() {
     
                 const montoInput = document.getElementById('monto');
                 const calculatedAmount = document.getElementById('calculatedAmount');
+                const submitButton = document.getElementById('submitTransaction');
     
                 montoInput.addEventListener('input', function () {
-                    const monto = parseFloat(montoInput.value) || 0;
+                    const monto = parseFloat(montoInput.value) || 0; // Obtener valor del input
                     const cryptoAmount = (monto / currentPrice).toFixed(8); // Cantidad calculada
                     calculatedAmount.textContent = `${cryptoAmount} ${cryptoSymbol}`;
+                });
+    
+                submitButton.addEventListener('click', function () {
+                    const monto = parseFloat(montoInput.value) || 0; // Obtener valor del input
+                    const cryptoAmount = (monto / currentPrice).toFixed(8);
+    
+                    if (monto > saldo) {
+                        alert('Saldo insuficiente.');
+                        return;
+                    }
+    
+                    fetch('/comprar', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            cryptoSymbol: cryptoSymbol,
+                            cryptoAmount: cryptoAmount,
+                            monto: monto,
+                        }),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al realizar la compra');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            alert(data.message);
+  
+                        }
+                    })
+                    .catch(error => {
+                        alert('Hubo un problema al realizar la compra.');
+                    });
                 });
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('Hubo un problema al cargar el saldo.');
             });
-    });
+    });    
     
-
-
 
 
     document.querySelector('.btn-automata').addEventListener('click', async function () {
@@ -317,4 +355,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicialización
     createOrUpdateChart(currentCrypto);
     updateAllCryptoData();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const cerrarSesion = document.getElementById('cerrarSesion');
+    const logoutPopup = document.getElementById('logoutPopup');
+
+    cerrarSesion.addEventListener('click', function() {
+        logoutPopup.style.display = logoutPopup.style.display === 'block' ? 'none' : 'block';
+    });
+
+    window.addEventListener('click', function(e) {
+        if (!cerrarSesion.contains(e.target) && !logoutPopup.contains(e.target)) {
+            logoutPopup.style.display = 'none';
+        }
+    });
 });
