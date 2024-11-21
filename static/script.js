@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.style.display = 'block';
     }
 
-    document.querySelector('.close').addEventListener('click', function () {
+    document.getElementById('close').addEventListener('click', function () {
         modal.style.display = 'none';
     });
 
@@ -279,6 +279,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });    
     
 
+    // modal.addEventListener('click', function() {
+    //     modal.style.display = 'none';
+    // });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
 
     document.querySelector('.btn-automata').addEventListener('click', async function () {
         openModal('Analizando datos...');
@@ -365,9 +374,51 @@ document.addEventListener('DOMContentLoaded', function() {
         logoutPopup.style.display = logoutPopup.style.display === 'block' ? 'none' : 'block';
     });
 
-    window.addEventListener('click', function(e) {
-        if (!cerrarSesion.contains(e.target) && !logoutPopup.contains(e.target)) {
-            logoutPopup.style.display = 'none';
-        }
-    });
+
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const btnVerReportes = document.querySelector('.view-report');
+    const modal = document.getElementById('modalReportes');
+    const closeReportes = document.getElementById('closeReportes');
+    
+    btnVerReportes.addEventListener('click', function() {
+        // Abrir el modal
+        modal.style.display = 'block';
+
+        // Mostrar el spinner mientras se obtienen los datos
+        document.getElementById('loading').style.display = 'block';
+
+        fetch('/api/reportes')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector('#tablaReportes tbody');
+                tbody.innerHTML = '';
+                data.forEach(compra => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${compra[0]}</td>
+                        <td>${compra[1]}</td>
+                        <td>${compra[2]}</td>
+                        <td>${compra[3]}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Ocultar el spinner cuando los datos estén cargados
+                document.getElementById('loading').style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error al obtener los reportes:', error);
+                // Ocultar el spinner si hay error
+                document.getElementById('loading').style.display = 'none';
+            });
+    });
+
+    closeReportes.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+
+
+});
+

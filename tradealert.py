@@ -106,7 +106,7 @@ def api_saldo():
         mycursor.close()
 
         if usuario:
-            return {'saldo': float(usuario[0])}  # Convertimos Decimal a float
+            return {'saldo': float(usuario[0])} 
         else:
             return {'error': 'Usuario no encontrado'}, 404
     except mysql.connector.Error as err:
@@ -161,7 +161,16 @@ def cuenta():
 
 @app.route('/billetera', methods=['GET','POST'])
 def billetera():
-    return render_template ('billetera.html')
+    mycursor = mydb.cursor()
+    if 'email' not in session:
+        return redirect('/login')
+
+    sql = "SELECT criptomoneda, saldo FROM billetera WHERE usuario_id = %s"
+    mycursor.execute(sql, (session['email'],)) 
+    crypto_saldos = mycursor.fetchall()
+    mycursor.close()
+
+    return render_template('billetera.html', cryptos=crypto_saldos)
 
 @app.route('/comprar', methods=['POST'])
 def comprar():
@@ -185,17 +194,14 @@ def comprar():
 
         usuario_id = session['email']
 
-        # Obtener saldo de USD del usuario
         mycursor = mydb.cursor(dictionary=True)
         mycursor.execute("SELECT saldo FROM usuario WHERE email = %s", (usuario_id,))
         user_result = mycursor.fetchone()
         saldo_disponible = user_result['saldo'] if user_result else 0
 
-        # Comprobar que hay suficiente saldo en USD
         if saldo_disponible < monto:
             return jsonify({'error': 'Saldo insuficiente en USD'}), 400
 
-        # Obtener saldo de la criptomoneda en billetera
         mycursor.execute("SELECT saldo FROM billetera WHERE usuario_id = %s AND criptomoneda = %s", (usuario_id, crypto_symbol))
         wallet_result = mycursor.fetchone()
 
@@ -204,21 +210,18 @@ def comprar():
         else:
             wallet_balance = Decimal('0.00000000')
 
-        # Si la criptomoneda ya existe, sumamos la cantidad
         new_wallet_balance = wallet_balance + crypto_amount
 
-        # Actualizar billetera
         if wallet_result:
             mycursor.execute("UPDATE billetera SET saldo = %s WHERE usuario_id = %s AND criptomoneda = %s", (new_wallet_balance, usuario_id, crypto_symbol))
         else:
             mycursor.execute("INSERT INTO billetera (usuario_id, criptomoneda, saldo) VALUES (%s, %s, %s)", (usuario_id, crypto_symbol, crypto_amount))
 
-        # Registrar la compra en la tabla compra_cripto
+
         mycursor.execute("""INSERT INTO compra_cripto (usuario_id, criptomoneda, cantidad, precio_unitario, total) 
                            VALUES (%s, %s, %s, %s, %s)""", 
                            (usuario_id, crypto_symbol, crypto_amount, monto / crypto_amount, monto))
 
-        # Actualizar el saldo de USD
         mycursor.execute("UPDATE usuario SET saldo = saldo - %s WHERE email = %s", (monto, usuario_id))
 
         mydb.commit()
@@ -228,7 +231,19 @@ def comprar():
         print("Error:", str(e))
         return jsonify({'error': f'Error en la compra: {str(e)}'}), 500
 
-            
+@app.route('/api/reportes')
+def reportes():
+    mycursor = mydb.cursor()
+    if 'email' not in session:
+        return redirect('/login')
+
+    mycursor.execute("SELECT criptomoneda,cantidad,precio_unitario, fecha FROM compra_cripto")  # Asume que tienes una tabla `compras_cripto`
+    compra = mycursor.fetchall()
+
+    mycursor.close()
+    print(compra)
+
+    return (compra)
             
 
 @app.route('/logout')

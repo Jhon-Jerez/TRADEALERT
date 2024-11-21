@@ -1,39 +1,45 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cuenta</title>
     <link rel="stylesheet" href="/static/styles-usuario.css">
+    <link rel="stylesheet" href="/static/styles-perfil.css">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-    
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
 <body>
     <header class="main-header">
         <img src="/static/images/tradealert.png" alt="LogoTradealert">
         <div class="buscar">
-            <input type="text" placeholder="Buscar">     
+            <input type="text" placeholder="Buscar">
         </div>
         <div class="user-info">
             <span id="userAvatar" class="user-avatar">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="35" height="35" fill="#2196f3">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    <path
+                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                 </svg>
             </span>
             <span class="user-name">{{ session['nombres'] }}</span>
             <span id="cerrarSesion" class="cerrar-sesion">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"  xmlns="http://www.w3.org/2000/svg" >
-                    <path d="M7 10L12 15L17 10" stroke="gray" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 10L12 15L17 10" stroke="gray" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
                 </svg>
             </span>
             <div id="logoutPopup" class="popup">
                 <a href="/logout">Cerrar sesión</a>
             </div>
         </div>
-        
-        </header>
+
+    </header>
     <div class="container">
         <aside class="sidebar">
             <nav>
@@ -41,14 +47,12 @@
                     <li><a href="/perfil"><span class="icon">📊</span>Dashboard</a></li>
                     <li><a href="/cuenta" class="active"><span class="icon">👤</span>Cuenta</a></li>
                     <li><a href="/billetera"><span class="icon">💼</span>Billetera</a></li>
-                    <li><a href="#"><span class="icon">⚙️</span>Opciones</a></li>
-                    <li><a href="#"><span class="icon">❓</span>Ayuda</a></li>
+
                 </ul>
             </nav>
         </aside>
         <main class="main-content">
             <section class="dashboard-content">
-
                 <div class="columns">
                     <div class="profile">
                         <h2><span>{{ session['nombres'] }}</span></h2>
@@ -56,15 +60,12 @@
                             <span>{{ session['saldo'] }} (USD)</span>
                         </div>
                         <form id="profile-form" action="/cuenta" method="POST">
-                            <div class="form-group">
-                                <label for="actualizar-nombre">Actualizar nombre</label>
-                                <input type="text" id="actualizar-nombre" name="actualizar-nombre" placeholder="Escriba su nombre" autocomplete="username">
-                            </div>
-                            <div class="form-group">
-                                <label for="contraseña">Cambiar contraseña</label>
-                                <input type="password" id="contraseña" name="actualizar-contraseña" placeholder="Escriba su contraseña" autocomplete="new-password">
-                            </div>
-                            <div class="form-group country-select">
+                            <label for="actualizar-nombre">Actualizar nombre</label>
+                            <input type="text" id="actualizar-nombre" name="actualizar-nombre"
+                                placeholder="Escriba su nombre" autocomplete="username">
+                            <label for="contraseña">Cambiar contraseña</label>
+                            <input type="password" id="contraseña" name="actualizar-contraseña"
+                                placeholder="Escriba su contraseña" autocomplete="new-password">
                                 <label for="country">País de residencia</label required>
                                 <select id="country" name="country">
                                     <option value="colombia">Colombia</option>
@@ -74,7 +75,6 @@
                                     <option value="corea-del-norte">Corea del Norte</option>
 
                                 </select>
-                            </div>
                             <button type="submit" class="save-button">Guardar cambios</button>
                         </form>
                     </div>
@@ -83,27 +83,28 @@
                     </div>
                 </div>
             </section>
-            
+
 
 
         </main>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    const cerrarSesion = document.getElementById('cerrarSesion');
-    const logoutPopup = document.getElementById('logoutPopup');
+        document.addEventListener('DOMContentLoaded', function () {
+            const cerrarSesion = document.getElementById('cerrarSesion');
+            const logoutPopup = document.getElementById('logoutPopup');
 
-    cerrarSesion.addEventListener('click', function() {
-        logoutPopup.style.display = logoutPopup.style.display === 'block' ? 'none' : 'block';
-    });
+            cerrarSesion.addEventListener('click', function () {
+                logoutPopup.style.display = logoutPopup.style.display === 'block' ? 'none' : 'block';
+            });
 
-    window.addEventListener('click', function(e) {
-        if (!cerrarSesion.contains(e.target) && !logoutPopup.contains(e.target)) {
-            logoutPopup.style.display = 'none';
-        }
-    });
-});
+            window.addEventListener('click', function (e) {
+                if (!cerrarSesion.contains(e.target) && !logoutPopup.contains(e.target)) {
+                    logoutPopup.style.display = 'none';
+                }
+            });
+        });
     </script>
 
 </body>
+
 </html>

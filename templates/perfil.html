@@ -10,6 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     
+    
 <body>
     <header class="main-header">
         <img src="/static/images/tradealert.png" alt="LogoTradealert">
@@ -41,8 +42,7 @@
                     <li><a href="/perfil" class="active"><span class="icon">📊</span>Dashboard</a></li>
                     <li><a href="/cuenta"><span class="icon">👤</span>Cuenta</a></li>
                     <li><a href="/billetera"><span class="icon">💼</span>Billetera</a></li>
-                    <li><a href="#"><span class="icon">⚙️</span>Opciones</a></li>
-                    <li><a href="#"><span class="icon">❓</span>Ayuda</a></li>
+    
                 </ul>
             </nav>
         </aside>
@@ -67,6 +67,25 @@
                     </div>
                     <a href="#" class="view-report">Ver Reportes</a>
                 </div>
+                <div id="modalReportes" class="modal-reportes">
+                    <div class="modal-content">
+                        <span class="close" id="closeReportes">&times;</span>
+                        <h2>Reportes de Compras</h2>
+                        <table id="tablaReportes">
+                            <thead>
+                                <tr>
+                                    <th>Criptomoneda</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Aquí se insertarán las filas dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div class="sales-chart">
                     <div class="chart-container">
                         <canvas id="salesChart"></canvas>
@@ -88,16 +107,16 @@
                     </button>
                 </div>
             </section>
-            <!-- Modal -->
+            
             <div id="modal" class="modal">
                 <div class="modal-content">
-                    <span class="close">&times;</span>
+                    <span class="close" id="close">&times;</span>
                     <div class="modal-body" id="modal-body"></div>
                     <div id="loading" class="loading-spinner" style="display: none;"></div>
                 </div>
             </div>
 
-
+           
         </main>
     </div>
 

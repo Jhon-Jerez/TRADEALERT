@@ -413,3 +413,42 @@ input[type="radio"] {
 .loadingMessage{
     align-items: center;
 }
+
+.modal-reportes{
+    display: none; 
+    position: fixed; 
+    z-index: 1;
+    top: 0;
+    width: 60%;
+    height: 10%;
+    height: 500px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow-y: auto; /* Desplazamiento vertical solo dentro del contenido */
+}
+#modalReportes .modal-content {
+    width: 80%;
+    overflow-y: auto; /* Desplazamiento vertical solo dentro del contenido */
+
+}
+
+.reportes-section {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+#tablaReportes {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#tablaReportes th, #tablaReportes td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+#tablaReportes th {
+    background-color: #f1f1f1;
+}
